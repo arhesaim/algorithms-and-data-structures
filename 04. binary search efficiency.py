@@ -1,45 +1,37 @@
-import timeit
-#import matplotlib.pyplot as plt
-import random as rd
+import random
+import time
+import matplotlib.pyplot as plt
 
-k = 1
-
-def binary_search(list, item):
-    low = 0
-    high = len(list) - 1
-    k += 1
-
-    while low <= high:
-        mid = (low+high)//2
-        guess = list[mid]
-        if guess == item:
+def binary_search(arr, x):
+    left = 0
+    right = len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == x:
             return mid
-        if guess > item:
-            high = mid - 1
+        elif arr[mid] < x:
+            left = mid + 1
         else:
-            low = mid + 1
-    return None
+            right = mid - 1
+    return -1
 
-# def plot_time(list, time):
-#     plt.plot(range(0, len(list), 1), range(0, time, 1))
+# Generate a random array of integers between 1 and 10000.
+arr = [random.randint(1, 10000) for _ in range(100000)]
 
-random_list = []
+# Perform binary search for different array sizes and measure the time taken.
+sizes = [100, 200, 500, 1000, 2000, 5000, 10000]
+times = []
+for size in sizes:
+    arr_subset = arr[:size]
+    x = random.randint(1, 10000)
+    start_time = time.time()
+    binary_search(arr_subset, x)
+    end_time = time.time()
+    times.append(end_time - start_time)
 
-for i in range(0, 5000):
-    value = rd.randint(1, 5000)
-    random_list.append(value)
-
-
-def binary_time():
-    mysetup = '''
-from __main__ import binary_search
-from __main__ import random_list'''
-    TEST_CODE = '''binary_search(random_list, 3)'''
-    print(timeit.timeit(setup=mysetup, stmt=TEST_CODE, number= 1000000))
-
-list_forGraph = len(random_list)/k
-time_forGraph = binary_time()/k
-
-
-if __name__ == "__main__":
-    binary_time()
+# Plot the results.
+plt.plot(sizes, times)
+plt.xlabel('Array size')
+plt.ylabel('Time (seconds)')
+plt.title('Binary search performance')
+plt.show()

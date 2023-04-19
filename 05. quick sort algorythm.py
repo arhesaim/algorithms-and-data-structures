@@ -1,53 +1,32 @@
 import random
-import timeit
+import time
+import matplotlib.pyplot as plt
 
-def quickSort(nums):
-    if len(nums) <= 1:
-        return nums
-    else:
-        q = random.choice(nums)
-        s_nums = []
-        m_nums = []
-        e_nums = []
-        for n in nums:
-            if n<q:
-                s_nums.append(n)
-            elif n > q:
-                m_nums.append(n)
-            else:
-                e_nums.append(n)
-        return quickSort(s_nums) + e_nums + quickSort(m_nums)
-    
-def bubbleSort(nums):
-    j = 1
-    for k in range(len(nums)):
-        for i in range(len(nums) - j):
-            if nums[i] > nums[i+1]:
-                nums[i+1], nums[i] = nums[i], nums[i+1]
-        j += 1
-    
-def quickSortTime():
-    mySetUp = '''
-from __main__ import quickSort
-from __main__ import nums'''
-    testCode = '''quickSort(nums)'''
-    print(timeit.timeit(setup=mySetUp, stmt=testCode, number=100000))
+def quicksort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quicksort(left) + middle + quicksort(right)
 
+# Generate a random array of integers between 1 and 10000.
+arr = [random.randint(1, 10000) for _ in range(1000)]
 
-def bubbleSortTime():
-    mySetUp = '''
-from __main__ import bubbleSort
-from __main__ import nums'''
-    testCode = '''bubbleSort(nums)'''
-    print(timeit.timeit(setup=mySetUp, stmt=testCode, number=100000))
-    
+# Sort the array using quicksort for different array sizes and measure the time taken.
+sizes = [100, 200, 500, 1000, 2000, 5000, 6000, 7000, 8000, 9000, 10000]
+times = []
+for size in sizes:
+    arr_subset = arr[:size]
+    start_time = time.time()
+    quicksort(arr_subset)
+    end_time = time.time()
+    times.append(end_time - start_time)
 
-nums = []
-for i in range(40):
-    num = random.randint(0, 20)
-    nums.append(num)
-
-
-if __name__ == "__main__":
-    quickSortTime()
-    bubbleSortTime()
+# Plot the results.
+plt.plot(sizes, times)
+plt.xlabel('Array size')
+plt.ylabel('Time (seconds)')
+plt.title('Quicksort performance')
+plt.show()
